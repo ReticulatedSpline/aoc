@@ -5,21 +5,23 @@ fn main() {
         .expect("Unable to read file");
     let mut sum = 0;
     for line in contents.lines() {
-        let mut first: Option<u32> = None;
-        let mut last: Option<u32> = None;
+        let mut first = 'a';
+        let mut last = 'a';
         for character in line.chars() {
             if character.is_digit(10) {
-                first = character.to_digit(10);
+                first = character;
                 break;
             }
         }
         for character in line.chars().rev() {
             if character.is_digit(10) {
-                last = character.to_digit(10);
+                last = character;
                 break;
             }
         }
-        sum += first.unwrap() + last.unwrap();
+        let mut combined_chars = first.to_string();
+        combined_chars.push_str(&last.to_string());
+        sum += combined_chars.parse::<i32>().unwrap();
     }
     println!("{sum}");
 }
