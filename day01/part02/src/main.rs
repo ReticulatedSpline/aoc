@@ -1,39 +1,30 @@
 use std::fs;
-use regex::Regex;
 
 fn main() {
-    let contents = fs::read_to_string("./input.txt")
+    let mut contents = fs::read_to_string("./input.txt")
         .expect("Unable to read file");
     
     let mut sum = 0;
     
-    let regex_data =
-        [(r"zero", "0"),
-         (r"one", "1"),
-         (r"two", "2"),
-         (r"three", "3"),
-         (r"four", "4"),
-         (r"five", "5"),
-         (r"six", "6"),
-         (r"seven", "7"),
-         (r"eight", "8"),
-         (r"nine", "9")];
+    let digit_strs =
+        [("zero", "z0o"),
+         ("one", "o1e"),
+         ("two", "t2o"),
+         ("three", "t3e"),
+         ("four", "f4r"),
+         ("five", "f5e"),
+         ("six", "s6x"),
+         ("seven", "s7n"),
+         ("eight", "e8t"),
+         ("nine", "n9e")];
 
-    // compile regexes outside of hot loop
-    let mut regexes = vec![];
-    for data in regex_data {
-        let (pattern, replacement) = data;
-        // dubious repacking of tuple...
-        regexes.push((Regex::new(pattern).unwrap(), replacement));
+    println!("Before re: {}", contents);
+    for digit in digit_strs {
+        contents = contents.replace(digit.0, digit.1);
     }
+    println!("After  re: {}", contents);
 
     for line in contents.lines() {
-        for regex in regexes {
-            let (re, replacement) = regex;
-            re.replace_all(&line, replacement);
-        }
-        println!("After  re: {}", line);
-
         let mut is_first_set = false;
         let mut first = 'a';
         let mut last = 'a';
