@@ -28,7 +28,6 @@ fn main() {
         let mut is_first_set = false;
         let mut first = 'a';
         let mut last = 'a';
-               
         for character in line.chars() {
             if !character.is_digit(10) {
                 continue;
