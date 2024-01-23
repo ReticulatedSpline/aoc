@@ -12,39 +12,52 @@ const MAX_CUBE_GAME: Game = Game {
     green: 14
 };
 
-fn get_num(&str) -> u8 {
+fn get_num(input: &str) -> u8 {
     // fetch ascii number from string
+    let mut output = "".to_string();
+    for c in input.chars() {
+        if !c.is_digit(10) {
+            continue;
+        }
+        output.push(c)
+    }
+    output.parse::<u8>().unwrap()
 }
 
 fn main() {
     let contents = fs::read_to_string("./input.txt")
         .expect("Unable to read file");
-    let mut game_id_sum = 0;
+    let mut game_id_sum: u32 = 0;
     let mut index_num = 1;
     for line in contents.lines() {
         let mut parts = line.split([':', ';']);
-        // skips unneeded 'Game: [0-9]+' substring
-        parts.next();
-        println!("Game {index_num}");
+        parts.next(); // skip unneeded 'Game: [0-9]+' substring
+        println!("Game {index_num}:");
         let mut game = parts.next();
         while game.is_some() {
             let cube_sets: Vec<&str> = game.expect("DEBUG").split(',').collect();
-            for cube_count_str in cube_sets {
-                // functionalize this maybe
-                if cube_count_str.contains("red") && 
-                   get_num(cube_count_str) > MAX_CUBE_GAME.red {
-                    // skip to next game
+            let mut game_valid = true;
+            for cube_count_str in &cube_sets {
+                let cube_num = get_num(cube_count_str);
+                if !game_valid {
+                    println!("Invalid match detected in {:?}", &cube_count_str);
+                    break;
                 }
-                else if cube_count_str.contains("blue") && 
-                        get_num(cube_count_str) > MAX_CUBE_GAME.blue {
-                    // skip to next game
+                if cube_count_str.contains("red") && cube_num > MAX_CUBE_GAME.red {
+                    game_valid = false;
                 }
-                else if cube_count_str.contains("green") && 
-                        get_num(cube_count_str) > MAX_CUBE_GAME.green {
-                    // skip to next game
+                else if cube_count_str.contains("blue") && cube_num > MAX_CUBE_GAME.blue {
+                    game_valid = false;
                 }
+                else if cube_count_str.contains("green") && cube_num > MAX_CUBE_GAME.green {
+                    game_valid = false;
+                }
+                game_id_sum += u32::from(cube_num);
             }
-            println!("{:?}", cubes);
+            if !game_valid {
+                break;
+            }
+            println!("{:?}", &cube_sets);
             game = parts.next()
         }
         println!("\n");
