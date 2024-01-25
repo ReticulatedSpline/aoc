@@ -2,14 +2,14 @@ use std::fs;
 
 struct Game {
     red: u8,
-    blue: u8,
-    green: u8
+    green: u8,
+    blue: u8
 }
 
 const MAX_CUBE_GAME: Game = Game {
     red: 12,
-    blue: 13,
-    green: 14
+    green: 13,
+    blue: 14
 };
 
 fn get_num(input: &str) -> u8 {
@@ -19,8 +19,9 @@ fn get_num(input: &str) -> u8 {
         if !c.is_digit(10) {
             continue;
         }
-        output.push(c)
+        output.push(c);
     }
+    
     output.parse::<u8>().unwrap()
 }
 
@@ -34,15 +35,13 @@ fn main() {
         parts.next(); // skip unneeded 'Game: [0-9]+' substring
         println!("Game {index_num}:");
         let mut game = parts.next();
+        let mut game_valid = true;
         while game.is_some() {
             let cube_sets: Vec<&str> = game.expect("DEBUG").split(',').collect();
-            let mut game_valid = true;
+            game_valid = true;
+            println!("{:?}", &cube_sets);
             for cube_count_str in &cube_sets {
                 let cube_num = get_num(cube_count_str);
-                if !game_valid {
-                    println!("Invalid match detected in {:?}", &cube_count_str);
-                    break;
-                }
                 if cube_count_str.contains("red") && cube_num > MAX_CUBE_GAME.red {
                     game_valid = false;
                 }
@@ -52,13 +51,23 @@ fn main() {
                 else if cube_count_str.contains("green") && cube_num > MAX_CUBE_GAME.green {
                     game_valid = false;
                 }
-                game_id_sum += u32::from(cube_num);
+                
+                if !game_valid {
+                    println!("Invalid combination: {:?}", &cube_count_str[1..]);
+                    break;
+                }
             }
+            
             if !game_valid {
+                println!("Skipping game...");
                 break;
             }
-            println!("{:?}", &cube_sets);
+            
             game = parts.next()
+        }
+        if game_valid {
+            game_id_sum += index_num;
+            println!("Sum: {game_id_sum}");
         }
         println!("\n");
         index_num += 1;
