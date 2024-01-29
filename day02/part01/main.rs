@@ -26,7 +26,7 @@ fn get_num(input: &str) -> u8 {
 }
 
 fn main() {
-    let contents = fs::read_to_string("./input.txt")
+    let contents = fs::read_to_string("../input.txt")
         .expect("Unable to read file");
     let mut game_id_sum: u32 = 0;
     let mut index_num = 1;
