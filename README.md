@@ -1,1 +1,1 @@
-Some solvers for the [2023 Advent of Code](https://adventofcode.com/), written in Rust.
+Solvers for a few of the [2023 Advent of Code](https://adventofcode.com/) challenges, written in Rust and C#.

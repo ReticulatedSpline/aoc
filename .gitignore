@@ -9,3 +9,7 @@
 
 # cargo files
 target/
+
+# cs files
+obj/
+bin/
