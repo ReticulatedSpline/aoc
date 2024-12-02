@@ -45,11 +45,21 @@
         (list1, list2) = parseInput(fileContents);
         list1.Sort();
         list2.Sort();
-        int sum = 0;
+        int part1 = 0;
+        int part2 = 0;
         for (int x = 0; x < list1.Count; x++) {
-            sum += Math.Abs(list1[x] - list2[x]);
+            part1 += Math.Abs(list1[x] - list2[x]);
         }
-        Console.WriteLine($"Sum: {sum}");
+
+        for (int x = 0; x < list1.Count; x++) {
+            part2 += list1[x] * list2.FindAll(
+                delegate(int y) {
+                    return list1[x] == y;
+                }).Count;
+        }
+
+        Console.WriteLine($"Part 1: {part1}");
+        Console.WriteLine($"Part 2: {part2}");
     }
 }
 
