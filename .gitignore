@@ -13,3 +13,4 @@ target/
 # cs files
 obj/
 bin/
+*.csproj
