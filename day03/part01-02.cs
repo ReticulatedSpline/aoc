@@ -92,22 +92,22 @@ class Program
         int searchEndColumn = (y < dimension - 1) ? y + 1 : dimension;
         int searchStartRow = (x > 0) ? x - 1 : 0;
         int searchEndRow = (x < dimension - 1) ? x + 1 : dimension;
-        
+        Console.WriteLine($"Checking bounds col {searchStartColumn}-{searchEndColumn}, row {searchStartRow}-{searchEndRow}");
         string currentNumber = "";
         bool numberRead = false;
         int numbersRead = 0;
         int firstNumber = 0;
         int secondNumber = 0;
-        for (int i = searchStartRow; i <= searchEndRow; i++) {
-            for (int j = searchStartColumn; j <= searchEndColumn; j++) {
+        for (int i = searchStartRow; i <= searchEndRow && i < dimension; i++) {
+            for (int j = searchStartColumn; j <= searchEndColumn && j < dimension; j++) {
                 
-                if (numbersRead > 2) {
-                    Console.WriteLine("No ratio found -- too many numbers!");
-                    break;
-                }
-
                 int numStartIndex = j;
                 char currentChar = input[i, j];
+
+                if (char.IsDigit(currentChar)) {
+                    numberRead = true;
+                }
+
                 while (char.IsDigit(currentChar) && numStartIndex > 0) {
                     numStartIndex--;
                     currentChar = input[i, numStartIndex];
@@ -121,13 +121,15 @@ class Program
                 if (numberRead) {
                     int numIndex = numStartIndex;
                     currentChar = input[i, numIndex];
-                    while (char.IsDigit(currentChar) && numIndex < dimension-1) {
+                    while (char.IsDigit(currentChar)) {
                         currentNumber += currentChar;
                         numIndex++;
+                        if (numIndex >= dimension) break;
                         currentChar = input[i, numIndex];
                     }
 
                     j = numIndex;
+                    Console.WriteLine($"Advancing j to {j}");
 
                     if (firstNumber == 0) {
                         firstNumber = int.Parse(currentNumber);
@@ -141,8 +143,8 @@ class Program
             }
         }
 
-        if (numbersRead < 2) {
-            Console.WriteLine("No ratio found.");
+        if (numbersRead != 2) {
+            Console.WriteLine("Either too few or too many ratios found.");
             return 0;
         }
 
