@@ -33,9 +33,11 @@
         return reports;
     }
     
-    static bool isUnsafeNumber (int currentValue, int previousValue, bool isIncreasing) {
-        return (isIncreasing && currentValue < previousValue) ||
-               Math.Abs(currentValue - previousValue) > 3;
+    static bool isUnsafeNumber(int currentValue, int previousValue, bool isIncreasing) {
+        return currentValue == previousValue ||
+              (isIncreasing && currentValue < previousValue) ||
+             (!isIncreasing && currentValue > previousValue) ||
+                Math.Abs(currentValue - previousValue) > 3;
     }
 
     static void Main(string[] args)
@@ -51,48 +53,32 @@
 
         int part1 = 0;
         foreach (List<int> report in reports) {
-            int reportIndex = 0;
-            int previousValue = 0;
-            int currentValue = 0;
-            bool? isIncreasing  = null;
+            int previousValue = report[0];
+            int currentValue = report[1];
+            bool isIncreasing = currentValue > previousValue;
             bool isSafeReport = true;
             Console.WriteLine("\nReading new report...");
-            foreach (int value in report) {
-                if (reportIndex == 0) {
-                    previousValue = value;
-                    reportIndex++;
-                    continue;
-                } 
-                
-                if (reportIndex == 1) {
-                    currentValue = value;
-                    reportIndex++;
-                    continue;
-                }
+            for (int index = 2; index <= report.Count; index++) {
 
-                // need to handle the case where isIncreasing isn't set until later (equal first two+ ints)
-                if (isIncreasing ==)
+                Console.WriteLine($"current {currentValue} previous {previousValue}");
 
                 if (isUnsafeNumber(currentValue, previousValue, isIncreasing)) {
+                    Console.WriteLine($"Unsafe!");
                     isSafeReport = false;
                     break;
                 }
 
-                Console.WriteLine($"current {currentValue} previous {previousValue}");
-                
-                previousValue = currentValue;
-                currentValue = value;
-            }
-
-            if (isUnsafeNumber(currentValue, previousValue, isIncreasing)) {
-                isSafeReport = false;
+                if (index < report.Count) {
+                    previousValue = currentValue;
+                    currentValue = report[index];
+                }
             }
 
             if (isSafeReport) {
                 part1++;
             }
         }
-
+        // Less than 570
         Console.WriteLine($"Part 1: {part1}");
     }
 }
