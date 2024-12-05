@@ -16,7 +16,6 @@ static string readFile(string filePath) {
 
 string pattern = @"mul\((\d+),(\d+)\)";
 string input = readFile("input.dat");
-string partTwoInput = new string(input);
 
 int partOneSum = 0;
 int partTwoSum = 0;
@@ -27,13 +26,26 @@ foreach (Match match in Regex.Matches(input, pattern)) {
 }
 
 // for part two, trim no-ops...
-string opPattern = @"don't\(\).*do()";
-foreach (Match match in Regex.Matches(input, opPattern)) {
-    
+string partTwoInput = "";
+bool currentlyOmitting = false;
+for (int index = 0; index < input.Length; index++) {
+    try {
+        if (input.Substring(index, 7).Equals("don't()")) {
+            currentlyOmitting = true;
+        } else if (input.Substring(index, 4).Equals("do()")) {
+            currentlyOmitting = false;
+        }
+    } catch (System.ArgumentOutOfRangeException) {
+        // no-op
+    };
+
+    if (!currentlyOmitting) {
+        partTwoInput += input[index];
+    }
 }
 
 // then sum
-foreach (Match match in Regex.Matches(input, pattern)) {
+foreach (Match match in Regex.Matches(partTwoInput, pattern)) {
     partTwoSum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
 }
 
