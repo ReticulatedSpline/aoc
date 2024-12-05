@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Threading.Tasks.Dataflow;
 
-class Program {
+class Part02 {
     static string? readFile(string filePath) {
         try
         {
@@ -47,7 +47,7 @@ class Program {
         int previousValue = report[0];
         int currentValue = report[1];
         bool isIncreasing = currentValue > previousValue;
-        for (int index = 2; index < report.Count; index++) {
+        for (int index = 2; index <= report.Count; index++) {
 
             Console.WriteLine($"Current: {currentValue}, Previous: {previousValue}");
             if (isUnsafeNumber(currentValue, previousValue, isIncreasing)) {
@@ -56,7 +56,9 @@ class Program {
             }
 
             previousValue = currentValue;
-            currentValue = report[index];
+            if (index < report.Count) {
+                currentValue = report[index];
+            }
         }
         return true;
     }
@@ -64,7 +66,7 @@ class Program {
     static void Main(string[] args)
     {
         Console.WriteLine("Running...");
-        string? fileContents = readFile("example.dat");
+        string? fileContents = readFile("input.dat");
         
         if (fileContents == null) {
             return;
@@ -83,11 +85,11 @@ class Program {
                 sum++;
             } else {
                 for (int removedIndex = 0; removedIndex < report.Count; removedIndex++) {
-                    Console.WriteLine($"Damping index {removedIndex}...");
+                    Console.WriteLine($"Damping index {removedIndex} ({report[removedIndex]})...");
                     List<int> dampedReport;
                     dampedReport = new List<int>(report);
                     dampedReport.RemoveAt(removedIndex);
-                    safe = isSafeReport(report);
+                    safe = isSafeReport(dampedReport);
 
                     if (!safe && !damped) {
                         safe = true;
@@ -101,6 +103,6 @@ class Program {
             }
         }
         // more than 588
-        Console.WriteLine($"Part 2: {sum}");
+        Console.WriteLine($"\nPart 2: {sum}");
     }
 }

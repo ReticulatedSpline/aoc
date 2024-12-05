@@ -1,4 +1,4 @@
-class Program {
+class Part01 {
     static string? readFile(string filePath) {
         try
         {
