@@ -70,11 +70,9 @@ int findMasX(char[,] matrix, int row, int column) {
     }
 
     if ((matrix[row+1, column-1] == 'M' && matrix[row-1, column+1] == 'S' ||
-         matrix[row+1, column-1] == 'S' && matrix[row-1, column+1] == 'M'))
-            results++;
-
-    if (matrix[row-1, column-1] == 'M' && matrix[row+1, column+1] == 'S' ||
-        matrix[row-1, column-1] == 'S' && matrix[row+1, column+1] == 'M')
+         matrix[row+1, column-1] == 'S' && matrix[row-1, column+1] == 'M') &&
+        (matrix[row-1, column-1] == 'M' && matrix[row+1, column+1] == 'S' ||
+         matrix[row-1, column-1] == 'S' && matrix[row+1, column+1] == 'M'))
             results++;
 
     return results;
