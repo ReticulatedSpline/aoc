@@ -60,16 +60,37 @@ bool isXmas(char[,] matrix, int row, int column, Direction direction) {
     }
 }
 
+int findMasX(char[,] matrix, int row, int column) {
+    int results = 0;
+    int dim = matrix.GetLength(0);
+    
+    if (row < 1 || row >= dim - 1 ||
+        column < 1 || column >= dim - 1) {
+        return 0;
+    }
+
+    if ((matrix[row+1, column-1] == 'M' && matrix[row-1, column+1] == 'S' ||
+         matrix[row+1, column-1] == 'S' && matrix[row-1, column+1] == 'M'))
+            results++;
+
+    if (matrix[row-1, column-1] == 'M' && matrix[row+1, column+1] == 'S' ||
+        matrix[row-1, column-1] == 'S' && matrix[row+1, column+1] == 'M')
+            results++;
+
+    return results;
+}
+
 int findTargets(char[,] matrix, int row, int column) {
     int targetsFound = 0;
     foreach(Direction direction in Enum.GetValues(typeof(Direction))) {
-        if (isXmas(matrix, row, column, direction)) targetsFound++;
+            if (isXmas(matrix, row, column, direction)) targetsFound++;
     }
 
     return targetsFound;
 }
 
-int sum = 0;
+int partOneSum = 0;
+int partTwoSum = 0;
 if (args.Length == 0) {
     Console.WriteLine("Missing input file argument!");
     return;
@@ -80,13 +101,17 @@ int dimension = matrix.GetLength(0);
 for (int row = 0; row < dimension; row++) {
     for (int column = 0; column < dimension; column++) {
         if (matrix[row, column] == 'X') {
-            sum += findTargets(matrix, row, column);
+            partOneSum += findTargets(matrix, row, column);
+        }
+        if (matrix[row, column] == 'A') {
+            partTwoSum += findMasX(matrix, row, column);
         }
     }
 }
 
-// more than 2484
-Console.WriteLine($"Sum: {sum}");
+// 2517
+Console.WriteLine($"Part One: {partOneSum}");
+Console.WriteLine($"Part Two: {partTwoSum}");
 
 enum Direction
 {
