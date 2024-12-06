@@ -32,7 +32,7 @@ bool isXmas(char[,] matrix, int row, int column, Direction direction) {
                     (matrix[row, column+1] == 'M' && matrix[row, column+2] == 'A' && matrix[row, column+3] == 'S')
                     : false;
         case Direction.Left:
-            return row > 3 ?
+            return row >= 3 ?
                     (matrix[row-1, column] == 'M' && matrix[row-2, column] == 'A' && matrix[row-3, column] == 'S')
                     : false;
         case Direction.Right:
@@ -40,20 +40,20 @@ bool isXmas(char[,] matrix, int row, int column, Direction direction) {
                     (matrix[row+1, column] == 'M' && matrix[row+2, column] == 'A' && matrix[row+3, column] == 'S')
                     : false;
         case Direction.UpRight:
-            return column >= 3 && row >= 3 ?
-                        (matrix[row-1, column-1] == 'M' && matrix[row-2, column-2] == 'A' && matrix[row-3, column-3] == 'S')
+            return column >= 3 && row < dim - 3 ?
+                        (matrix[row+1, column-1] == 'M' && matrix[row+2, column-2] == 'A' && matrix[row+3, column-3] == 'S')
                     : false;
         case Direction.DownRight:
             return column < dim - 3 && row < dim - 3 ?
                     (matrix[row+1, column+1] == 'M' && matrix[row+2, column+2] == 'A' && matrix[row+3, column+3] == 'S')
                     : false;
         case Direction.UpLeft:
-            return row > 3 && column > 3 ?
+            return row >= 3 && column >= 3 ?
                     (matrix[row-1, column-1] == 'M' && matrix[row-2, column-2] == 'A' && matrix[row-3, column-3] == 'S')
                     : false;
         case Direction.DownLeft:
-            return row < dim - 3 && column < dim - 3?
-                    (matrix[row+1, column+1] == 'M' && matrix[row+2, column+2] == 'A' && matrix[row+3, column+3] == 'S')
+            return row >= 3 && column < dim - 3?
+                    (matrix[row-1, column+1] == 'M' && matrix[row-2, column+2] == 'A' && matrix[row-3, column+3] == 'S')
                     : false;
         default:
             return false;
