@@ -39,6 +39,22 @@ static bool isValidPageSet(List<(int,int)> rules, List<int> pageSet) {
     return true;
 }
 
+static List<int> reorderPages(List<(int,int)> rules, List<int> pageSet) {
+    for (int i = 0; i < rules.Count; i++) {
+        (int, int) rule = rules[i];
+        int ruleOneIndex = pageSet.IndexOf(rule.Item1);
+        int ruleTwoIndex = pageSet.IndexOf(rule.Item2);
+        if (ruleOneIndex >= 0 && ruleTwoIndex >= 0 &&
+            ruleOneIndex > ruleTwoIndex) {
+            int temp = pageSet[ruleOneIndex];
+            pageSet[ruleOneIndex] = pageSet[ruleTwoIndex];
+            pageSet[ruleTwoIndex] = temp;
+            i = 0;
+        } 
+    }
+    return pageSet;
+}
+
 int partOneSum = 0;
 int partTwoSum = 0;
 if (args.Length == 0) {
@@ -58,8 +74,12 @@ foreach (var pageSet in pageDir) {
     }
     if (isValid) {
         partOneSum += pageSet[pageSet.Count / 2];
+    } else {
+        partTwoSum += reorderPages(rules, pageSet)[pageSet.Count / 2];
     }
 }
 
+// 4790
 Console.WriteLine($"Part One: {partOneSum}");
+// 6195 is too low
 Console.WriteLine($"Part Two: {partTwoSum}");
