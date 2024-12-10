@@ -1,5 +1,4 @@
-﻿using System.Formats.Tar;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 static (List<(int,int)>, List<List<int>>) readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
