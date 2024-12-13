@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-
-static (char[,], (uint X, uint Y)) readFile(string filePath) {
+﻿static (char[,], (uint X, uint Y)) readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
         string? line = sr.ReadLine();
         var loc = (0u,0u);
