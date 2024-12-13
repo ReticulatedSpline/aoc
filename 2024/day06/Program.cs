@@ -1,4 +1,6 @@
-﻿static (char[,], (uint X, uint Y)) readFile(string filePath) {
+﻿using System.Security.Principal;
+
+static (char[,], (uint X, uint Y)) readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
         string? line = sr.ReadLine();
         var loc = (0u,0u);
@@ -82,7 +84,7 @@ if (args.Length == 0) {
 var (map, loc) = readFile(args[0]);
 var dir = Direction.Up;
 
-// dont make bully me for this
+// dont bully me for this
 try {
     do {
         map[loc.X, loc.Y] = 'X';
@@ -92,6 +94,38 @@ try {
 } catch (System.IndexOutOfRangeException) {
     Console.WriteLine($"Part one: {countPositions(map)}");
 }
+
+// yeah its big brain time
+uint partTwoSum = 0;
+var traveledVectors = new List<((uint, uint), Direction)>();
+for (int i = 0; i < map.GetLength(0); i++) {
+    for (int k = 0; k < map.GetLength(0); k++) {
+        (map, loc) = readFile(args[0]);
+        (uint, uint) startingLoc = loc;
+        if (map[i, k] == '.') {
+            map[i, k] = '#';
+        }
+        dir = Direction.Up;
+        if ((i, k).Equals(startingLoc)) {
+            continue;
+        }
+        traveledVectors.Clear();
+        try {
+            do {
+                (dir, loc) = advancePosition(map, loc, dir);
+                if (traveledVectors.Contains((loc, dir))) {
+                    break;
+                }
+                traveledVectors.Add((loc, dir));
+            } while (true);
+            partTwoSum++;
+        } catch (System.IndexOutOfRangeException) {
+            continue;
+        }
+    }
+}
+
+Console.WriteLine($"Part two: {partTwoSum}");
 
 enum Direction {
     Up,
