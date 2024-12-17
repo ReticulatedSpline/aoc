@@ -1,23 +1,14 @@
-﻿using System.Text.RegularExpressions;
-
-static List<(int, List<int>)> readFile(string filePath) {
-    
-    string resultPattern = @"(\d+):";
-    string operandPattern = @"(?:\s(\d+))+";
-
+﻿static List<(int, List<int>)> readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
-        string? line = sr.ReadLine();
+        string? line;
         var inputModel = new List<(int, List<int>)>();
         while ((line = sr.ReadLine()) != null) {
-    
-            Match resultMatch = Regex.Match(line, resultPattern);
-            int result = int.Parse(resultMatch.Value);
+            var parts = line.Split();
+            int result = int.Parse(parts[0].Trim(':'));
             
-            MatchCollection operandMatches = Regex.Matches(line, operandPattern);
             var operands = new List<int>();
-    
-            foreach(Match match in operandMatches) {
-                operands.Add(int.Parse(match.Value));
+            for(int i = 1; i<parts.Length; i++) {
+                operands.Add(int.Parse(parts[i]));
             }
 
             inputModel.Add((result, operands));
@@ -27,7 +18,7 @@ static List<(int, List<int>)> readFile(string filePath) {
     }
 }
 
-// iterative version of Heap's Algorithm adapted from Wikipedia
+// iterative version of Heap's Algorithm adapted from Wikipedia for C#
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
 static List<List<char>> generatePermutations(int n, List<char> operators) {
     
