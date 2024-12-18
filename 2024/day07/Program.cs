@@ -68,25 +68,25 @@ static List<List<char>> generatePermutations(int n, List<char> operators) {
 }
 
 static bool isPossibleEquation(int result, List<int> operands) {
-    List<char> operators = ['+', '*'];
-    foreach(List<char> operatorList in generatePermutations(operands.Count - 1, operators)) {
+    List<char> possibleOperators = ['+', '*'];
+    foreach(List<char> operators in generatePermutations(operands.Count, possibleOperators)) {
+        var operandsCopy = new List<int>(operands);
+        var operatorsCopy = new List<char>(operators);
         bool calculationComplete = false;
-        int sum = operands[0];
-        operands.RemoveAt(0);
+        int sum = operandsCopy[0];
+        operandsCopy.RemoveAt(0);
         while (!calculationComplete) {
-            var currentOperator = operatorList[0];
-            var currentOperand = operands[0];
-            switch (currentOperator) {
+            switch (operatorsCopy[0]) {
                 case '+':
-                    sum += currentOperand;
+                    sum += operandsCopy[0];
                     break;
                 case '*':
-                    sum *= currentOperand;
+                    sum *= operandsCopy[0];
                     break;
             }
-            operands.RemoveAt(0);
-            operators.RemoveAt(0);
-            calculationComplete = operators.Count > 0 && operands.Count > 0 && sum <= result;
+            operandsCopy.RemoveAt(0);
+            operatorsCopy.RemoveAt(0);
+            calculationComplete = operatorsCopy.Count > 0 || operandsCopy.Count > 0 || sum <= result;
         }
 
         if (sum == result) {
