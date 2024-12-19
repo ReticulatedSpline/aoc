@@ -1,10 +1,13 @@
-﻿static List<(int, List<int>)> readFile(string filePath) {
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+
+static List<(Int64, List<int>)> readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
         string? line;
-        var inputModel = new List<(int, List<int>)>();
+        var inputModel = new List<(Int64, List<int>)>();
         while ((line = sr.ReadLine()) != null) {
             var parts = line.Split();
-            int result = int.Parse(parts[0].Trim(':'));
+            Int64 result = Int64.Parse(parts[0].Trim(':'));
             
             var operands = new List<int>();
             for(int i = 1; i<parts.Length; i++) {
@@ -18,78 +21,28 @@
     }
 }
 
-// iterative version of Heap's Algorithm adapted from Wikipedia for C#
-// https://en.wikipedia.org/wiki/Heap%27s_algorithm
-static List<List<char>> generatePermutations(int n, List<char> operators) {
-    
-    var result = new List<List<char>>();
-    
-    // c is an encoding of the stack state
-    // c[k] encodes the for-loop counter for when generate(k - 1, A) is called
-    // initialized to zeroed list of length n 
-    var c = new int[n];
-    
-    // add initial state to results list
-    result.Add(new List<char>(operators));
-    
-    // i acts like a stack pointer here
-    int i = 1;
-    char temp;
-    while (i < n) {
-        if (c[i] < i) {
-            if (i % 2 == 0) {
-                temp = operators[0];
-                operators[0] = operators[i];
-                operators[i] = temp;
-            } else {
-                temp = operators[c[i]];
-                operators[c[i]] = operators[i];
-                operators[i] = temp;
-            }
-        
-            result.Add(new List<char>(operators));
-            
-            // swap has occurred ending the while-loop
-            // simulate the increment of the while-loop counter
-            c[i]++;
-            
-            // simulate recursive call reaching the base case by
-            // bringing the pointer to the base case analog in the array
-            i = 1;
-        } else {
-            // calling generate(i+1, A) has ended as the while-loop terminated
-            // reset the state and simulate popping the stack by incrementing the pointer.
-            c[i] = 0;
-            i++;
-        }
+static bool isPossibleEquation(Int64 result, int currentSum, List<char> operators, List<int> operands) {
+    if (operands.Count == 0) {
+        return currentSum == result;
     }
 
-    return result;
-}
-
-static bool isPossibleEquation(int result, List<int> operands) {
-    List<char> possibleOperators = ['+', '*'];
-    foreach(List<char> operators in generatePermutations(operands.Count, possibleOperators)) {
-        var operandsCopy = new List<int>(operands);
-        var operatorsCopy = new List<char>(operators);
-        bool calculationComplete = false;
-        int sum = operandsCopy[0];
-        operandsCopy.RemoveAt(0);
-        while (!calculationComplete) {
-            switch (operatorsCopy[0]) {
-                case '+':
-                    sum += operandsCopy[0];
-                    break;
-                case '*':
-                    sum *= operandsCopy[0];
-                    break;
-            }
-            operandsCopy.RemoveAt(0);
-            operatorsCopy.RemoveAt(0);
-            calculationComplete = operatorsCopy.Count > 0 || operandsCopy.Count > 0 || sum <= result;
+    for (int i = 0; i < operators.Count; i++) {
+        char op = operators[i];
+        int currentOperand = operands[0];
+        List<int> remainingOperands = operands.Skip(1).ToList();
+        bool found = false;
+        switch (op) {
+            case '+':
+                found = isPossibleEquation(result, currentSum + currentOperand, operators, remainingOperands);
+                break;
+            case '*':
+                found = isPossibleEquation(result, currentSum * currentOperand, operators, remainingOperands);
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported operator");
         }
 
-        if (sum == result) {
+        if (found) {
             return true;
         }
     }
@@ -105,10 +58,13 @@ if (args.Length == 0) {
 var equations = readFile(args[0]);
 int partOneSum = 0;
 
-foreach ((int result, List<int> operands) in equations) {
-    if (isPossibleEquation(result, operands)) {
+foreach ((Int64 result, List<int> operands) in equations) {
+    List<char> operators = ['*', '+'];
+    
+    if (isPossibleEquation(result, 0, operators, operands)) {
         partOneSum++;
     }
 }
 
+// 182 is too low
 Console.WriteLine($"Part one: {partOneSum}");
