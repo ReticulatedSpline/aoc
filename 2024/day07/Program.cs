@@ -1,13 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
-static List<(Int64, List<int>)> readFile(string filePath) {
+static List<(long, List<int>)> readFile(string filePath) {
     using (StreamReader sr = new StreamReader(filePath)) {
         string? line;
-        var inputModel = new List<(Int64, List<int>)>();
+        var inputModel = new List<(long, List<int>)>();
         while ((line = sr.ReadLine()) != null) {
             var parts = line.Split();
-            Int64 result = Int64.Parse(parts[0].Trim(':'));
+            long result = long.Parse(parts[0].Trim(':'));
             
             var operands = new List<int>();
             for(int i = 1; i<parts.Length; i++) {
@@ -21,28 +23,33 @@ static List<(Int64, List<int>)> readFile(string filePath) {
     }
 }
 
-static bool isPossibleEquation(Int64 result, int currentSum, List<char> operators, List<int> operands) {
+static bool isPossibleEquation(long result, int currentSum, List<char> operators, List<int> operands) {
+    
+    Console.WriteLine($"Recursion level: {operands.Count} operands left.");
     if (operands.Count == 0) {
+        Console.WriteLine($"Out of operands. Returning {currentSum} == {result}.");
         return currentSum == result;
+    } else if (currentSum > result) {
+        Console.WriteLine($"Current sum of {currentSum} has surpassed {result}.");
+        return false;
     }
 
-    for (int i = 0; i < operators.Count; i++) {
-        char op = operators[i];
-        int currentOperand = operands[0];
-        List<int> remainingOperands = operands.Skip(1).ToList();
+    foreach(var op in operators) {
         bool found = false;
+        List<int> remainingOperands = operands.Skip(1).ToList();
         switch (op) {
             case '+':
-                found = isPossibleEquation(result, currentSum + currentOperand, operators, remainingOperands);
+                found = isPossibleEquation(result, currentSum + operands[0], operators, remainingOperands);
                 break;
             case '*':
-                found = isPossibleEquation(result, currentSum * currentOperand, operators, remainingOperands);
+                found = isPossibleEquation(result, currentSum * operands[0], operators, remainingOperands);
                 break;
             default:
                 throw new InvalidOperationException("Unsupported operator");
         }
 
         if (found) {
+            Console.WriteLine("Possible equation.");
             return true;
         }
     }
@@ -56,15 +63,22 @@ if (args.Length == 0) {
 }
 
 var equations = readFile(args[0]);
-int partOneSum = 0;
+long partOneSum = 0;
 
-foreach ((Int64 result, List<int> operands) in equations) {
+foreach ((long result, List<int> operands) in equations) {
     List<char> operators = ['*', '+'];
-    
+
+    Console.WriteLine();
+    Console.Write($"Checking equation {result}: ");
+    foreach(var operand in operands) {
+        Console.Write($"{operand}, ");
+    }
+    Console.WriteLine();
+
     if (isPossibleEquation(result, 0, operators, operands)) {
-        partOneSum++;
+        partOneSum += result;
     }
 }
 
-// 182 is too low
+// 16,367,171,532 is too low
 Console.WriteLine($"Part one: {partOneSum}");
